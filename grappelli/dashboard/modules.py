@@ -175,10 +175,7 @@ class Group(DashboardModule):
         
         if super(Group, self).is_empty():
             return True
-        for child in self.children:
-            if not child.is_empty():
-                return False
-        return True
+        return all(child.is_empty() for child in self.children)
 
 
 class LinkList(DashboardModule):
@@ -235,14 +232,13 @@ class AppList(DashboardModule, AppListElementMixin):
                     'url': self._get_admin_app_list_url(model, context),
                     'models': []
                 }
-            model_dict = {}
-            model_dict['title'] = capfirst(model._meta.verbose_name_plural)
+            model_dict = {'title': capfirst(model._meta.verbose_name_plural)}
             if perms['change']:
                 model_dict['change_url'] = self._get_admin_change_url(model, context)
             if perms['add']:
                 model_dict['add_url'] = self._get_admin_add_url(model, context)
             apps[app_label]['models'].append(model_dict)
-        
+
         apps_sorted = apps.keys()
         apps_sorted.sort()
         for app in apps_sorted:
@@ -273,8 +269,7 @@ class ModelList(DashboardModule, AppListElementMixin):
         if not items:
             return
         for model, perms in items:
-            model_dict = {}
-            model_dict['title'] = capfirst(model._meta.verbose_name_plural)
+            model_dict = {'title': capfirst(model._meta.verbose_name_plural)}
             if perms['change']:
                 model_dict['change_url'] = self._get_admin_change_url(model, context)
             if perms['add']:
@@ -323,10 +318,7 @@ class RecentActions(DashboardModule):
                         content_type__app_label=app_label,
                         content_type__model=model
                     )
-                if qset is None:
-                    qset = current_qset
-                else:
-                    qset = qset | current_qset
+                qset = current_qset if qset is None else qset | current_qset
             return qset
             
         if request.user is None:

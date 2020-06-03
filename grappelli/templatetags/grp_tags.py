@@ -134,10 +134,7 @@ register.tag('get_search_fields_verbose', do_get_search_fields_verbose)
 def classname(obj, arg=None):
     classname = obj.__class__.__name__.lower()
     if arg:
-        if arg.lower() == classname:
-            return True
-        else:
-            return False
+        return arg.lower() == classname
     else:
         return classname
 

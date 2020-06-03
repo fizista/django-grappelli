@@ -131,7 +131,7 @@ class AppListElementMixin(object):
         
         included = self.models[:]
         excluded = self.exclude[:]
-        if not self.models and not self.exclude:
+        if not (self.models or self.exclude):
             included = ["*"]
         return filter_models(request, included, excluded)
     
